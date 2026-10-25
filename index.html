@@ -72,6 +72,13 @@ h2{font-family:var(--display);font-weight:400;font-size:26px;text-transform:uppe
 .code b{font-family:var(--display);font-weight:400;font-size:40px;letter-spacing:.06em;user-select:all}
 .code span{color:var(--muted);font-size:13px;flex:1 1 160px}
 .code button{font:700 13px var(--body);letter-spacing:.06em;text-transform:uppercase;background:var(--red);color:#fff;border:0;border-radius:6px;padding:10px 14px;cursor:pointer}
+.gate{position:relative;display:flex;flex-direction:column;gap:22px}
+.gated{display:flex;flex-direction:column;gap:22px}
+.gate.locked .gated{filter:blur(12px);pointer-events:none;user-select:none;max-height:900px;overflow:hidden}
+.lock{display:none}
+.gate.locked .lock{display:flex;flex-direction:column;gap:12px;align-items:flex-start;position:absolute;z-index:5;top:40px;left:0;right:0;margin:0 auto;max-width:520px;background:var(--panel);border:2px solid var(--red);border-radius:12px;padding:22px;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+.gate.locked{min-height:520px}
+button.btn{cursor:pointer;font-family:var(--body)}
 .btn.off{background:transparent;color:var(--muted);border-color:var(--line);text-decoration:line-through;cursor:not-allowed}
 .g.off{cursor:default}
 .g.off img{filter:grayscale(.85) brightness(.55)}
@@ -131,6 +138,15 @@ footer{font-size:12px;color:var(--muted);border-top:1px solid var(--line);paddin
     <label class="check full" for="budget"><input type="checkbox" id="budget">Je veux manger équilibré avec un petit budget</label>
   </form>
 
+  <div class="gate" id="gate">
+  <div class="lock" id="lock">
+    <div class="brand">Résultat prêt</div>
+    <h2>Abonne-toi pour voir tes chiffres</h2>
+    <p class="note">C'est gratuit. Abonne-toi à @rb.nutrition.muscu sur Instagram, puis reviens ici pour débloquer ton résultat.</p>
+    <a class="btn" id="ig" href="https://www.instagram.com/rb.nutrition.muscu/" target="_blank" rel="noopener">S'abonner sur Instagram</a>
+    <button type="button" class="btn ghost" id="unlock" hidden>Je suis abonné, voir mon résultat</button>
+  </div>
+  <div class="gated" id="gated">
   <section class="result" aria-live="polite">
     <div class="kcal"><b id="r-kcal">3 040</b><span id="r-label">kcal par jour</span></div>
     <div class="macros">
@@ -160,6 +176,8 @@ footer{font-size:12px;color:var(--muted);border-top:1px solid var(--line);paddin
       <a class="btn ghost" href="https://www.instagram.com/rb.nutrition.muscu/" target="_blank" rel="noopener">@rb.nutrition.muscu</a>
     </div>
   </section>
+  </div>
+  </div>
 
   <footer>Calcul basé sur la formule de Mifflin-St Jeor. Conseils généraux pour adultes en bonne santé : ils ne remplacent pas l'avis d'un médecin ou d'un diététicien, surtout en cas de grossesse, de maladie ou d'antécédent de troubles alimentaires.</footer>
 </div>
@@ -225,6 +243,10 @@ $('f').addEventListener('submit',e=>e.preventDefault());
 $('amz-off').hidden=!BIENTOT; $('amz-on').hidden=BIENTOT; $('soon-note').hidden=!BIENTOT;
 $('copy').addEventListener('click',()=>{const b=$('copy');const done=()=>{b.textContent='Code copié';setTimeout(()=>b.textContent='Copier le code',2000);};
   try{navigator.clipboard.writeText('RBN76').then(done,()=>{const r=document.createRange();r.selectNodeContents($('code'));const s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent='Code sélectionné';});}catch(e){const r=document.createRange();r.selectNodeContents($('code'));const s=getSelection();s.removeAllRanges();s.addRange(r);}});
+(function(){const g=$('gate');let ok=false;try{ok=localStorage.getItem('rbn_unlock')==='1'}catch(e){}
+  if(!ok) g.classList.add('locked');
+  $('ig').addEventListener('click',()=>{setTimeout(()=>{$('unlock').hidden=false;},3000);});
+  $('unlock').addEventListener('click',()=>{g.classList.remove('locked');try{localStorage.setItem('rbn_unlock','1')}catch(e){}});})();
 calc();
 </script>
 
