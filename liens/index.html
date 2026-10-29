@@ -64,6 +64,7 @@
 </main>
 <div class="toast" id="toast"></div>
 
+<script src="tableur.js"></script>
 <script>
 /* =========================================================
    TES LIENS — c'est la seule partie à modifier.
@@ -83,10 +84,11 @@ const RESEAUX = [
 const SECTIONS = [
   { titre: "GRATUIT", boutons: [
     { emoji:"🧮", texte:"Calcule tes calories et protéines", sous:"Outil gratuit, 30 secondes",
-      lien:"https://rbnutrition.github.io/" }
+      lien:"https://rbnutrition.github.io/" },
+    { emoji:"📊", texte:"Tableur suivi prise de masse", sous:"À télécharger · Excel, Google Sheets, Numbers",
+      lien:"#", action:"tableur" }
   ]},
   { titre: "MES PRODUITS", boutons: [
-    { emoji:"📊", texte:"Tableur suivi prise de masse", sous:"Suis tes kilos, tes repas, tes charges", lien:"" },
     { emoji:"📘", texte:"Guide prise de masse", sous:"Dispo sur Amazon", lien:"https://amzn.eu/d/0c4g9BZ2" },
     { emoji:"📗", texte:"Guide perte de poids", sous:"Dispo sur Amazon", lien:"https://amzn.eu/d/0iKKT7cQ" }
   ]},
@@ -116,7 +118,8 @@ SECTIONS.forEach(s => {
     const pret = !!b.lien;
     const a = document.createElement('a');
     a.className = 'btn' + (b.principal ? ' top' : '') + (pret ? '' : ' soon');
-    if (pret) { a.href=b.lien; if(!b.lien.startsWith('mailto:')){a.target="_blank"; a.rel="noopener";} }
+    if (pret) { a.href=b.lien; if(!b.action && !b.lien.startsWith('mailto:')){a.target="_blank"; a.rel="noopener";} }
+    if (b.action === 'tableur') a.onclick = e => { e.preventDefault(); rbTelecharger(a); };
     a.innerHTML = `<strong>${b.emoji} ${b.texte}${b.code?` <span class="badge">${b.code}</span>`:''}${pret?'':' <span class="badge">BIENTÔT</span>'}</strong><small>${b.sous}</small>`;
     zone.appendChild(a);
     if (b.code && pret) {
